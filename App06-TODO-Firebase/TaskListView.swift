@@ -11,6 +11,7 @@ import FirebaseFirestoreSwift
 struct TaskListView: View {
     
     @StateObject var taskModel = TaskModel()
+    @AppStorage("titulo") var title: String = "Tareas"
     
     var body: some View {
         NavigationView {
@@ -35,6 +36,7 @@ struct TaskListView: View {
                     Spacer()
                     Button() {
                         addTask()
+                        title = "Task"
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.largeTitle)
@@ -45,7 +47,7 @@ struct TaskListView: View {
                 .listStyle(DefaultListStyle())
                 .toolbar {
                     ToolbarItem(placement: .principal) {
-                        Text("Tareas")
+                        Text(title)
                             .font(.largeTitle)
                             .foregroundColor(.orange)
                     }
