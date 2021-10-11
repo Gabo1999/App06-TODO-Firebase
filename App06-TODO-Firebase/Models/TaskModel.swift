@@ -11,13 +11,17 @@ import FirebaseFirestore
 class TaskModel: ObservableObject {
     
     @Published var tasks = [Task]()
+    @Published var categories = [Category]()
+    @Published var priorities = [Priority]()
     let db = Firestore.firestore()
     
     init() {
-        fetchData()
+        fetchTasks()
+        fetchCategories()
+        fetchPriorities()
     }
     
-    func fetchData() {
+    func fetchTasks() {
         db.collection("Tasks").order(by: "due_date")
             .addSnapshotListener { (querySnapshot, error) in
                 guard let documents = querySnapshot?.documents else {
@@ -30,6 +34,35 @@ class TaskModel: ObservableObject {
                 }
             }
     }
+    
+    func fetchCategories() {
+        db.collection("Category").order(by: "category_id")
+            .addSnapshotListener { (querySnapshot, error) in
+                guard let documents = querySnapshot?.documents else {
+                    print("Error fetching document: \(error!)")
+                    return
+                }
+                print(documents.count)
+                self.categories = documents.compactMap { queryDocumentSnapshot -> Category? in
+                    return try? queryDocumentSnapshot.data(as: Category.self)
+                }
+            }
+    }
+    
+    func fetchPriorities() {
+        db.collection("Priority").order(by: "priority_id")
+            .addSnapshotListener { (querySnapshot, error) in
+                guard let documents = querySnapshot?.documents else {
+                    print("Error fetching document: \(error!)")
+                    return
+                }
+                print(documents.count)
+                self.priorities = documents.compactMap { queryDocumentSnapshot -> Priority? in
+                    return try? queryDocumentSnapshot.data(as: Priority.self)
+                }
+            }
+    }
+    
     // Función para agregar datos a la base de datos
     func addData(task: Task) {
         do {

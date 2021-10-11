@@ -11,7 +11,8 @@ import FirebaseFirestoreSwift
 struct TaskListView: View {
     
     @StateObject var taskModel = TaskModel()
-    @AppStorage("titulo") var title: String = "Tareas"
+    @AppStorage("titulo", store: UserDefaults(suiteName: "App06-TODO")) var title: String = "Tareas"
+    
     
     var body: some View {
         NavigationView {
@@ -19,7 +20,7 @@ struct TaskListView: View {
                 List {
                     if taskModel.tasks.count > 0 {
                         ForEach(taskModel.tasks) { task in
-                            NavigationLink(destination: TaskDetailView(taskModel: taskModel, task: task)) {
+                            NavigationLink(destination: TaskDetailView(taskModel: taskModel, task: task, mode: .edit)) {
                                 Text(task.task)
                             }
                         }
@@ -34,10 +35,7 @@ struct TaskListView: View {
                 }
                 VStack {
                     Spacer()
-                    Button() {
-                        addTask()
-                        title = "Task"
-                    } label: {
+                    NavigationLink(destination: TaskDetailView(taskModel: taskModel, task: Task.dummy, mode: .add)) {
                         Image(systemName: "plus.circle.fill")
                             .font(.largeTitle)
                             .foregroundColor(.green)
